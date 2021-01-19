@@ -14,16 +14,18 @@ ADAPTER=hci0
 # -w wait timeout
 
 function show_help() {
-	echo "Usage: $0 -m BLUETOOTH_MAC [-b] [-h] [-r RETRIES] [-s] [-t] [-w TIMEOUT]"
+	echo "Usage: $0 -b BLUETOOTH_MAC [-h] [-i INTERFACE] [-p] [-r RETRIES] [-s] [-t] [-w TIMEOUT]"
 	echo ""
 	echo "  -b A  connect to bluetooth device MAC address A"
 	echo "  -h    display humidity (in %)"
-	echo "  -i I  interface I (default $ADAPTER)"
+	echo "  -i I  use interface I (default $ADAPTER)"
 	echo "  -p    display battery level (in %)"
 	echo "  -r N  try connecting N times (default $TRIES)"
 	echo "  -s    display temperature, humidity and battery voltage"
 	echo "  -t    display temperature (in °C)"
 	echo "  -w S  wait S seconds for timeout (default $TIMEOUT)"
+	echo ""
+	echo "Example: $0 -b A4:C1:38:03:13:37 -s"
 }
 
 
