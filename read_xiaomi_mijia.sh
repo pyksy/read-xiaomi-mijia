@@ -17,28 +17,19 @@ function show_help() {
 	echo "Usage: $0 -m BLUETOOTH_MAC [-b] [-h] [-r RETRIES] [-s] [-t] [-w TIMEOUT]"
 	echo ""
 	echo "  -b A  connect to bluetooth device MAC address A"
-	echo "  -h    display humidity in (%)"
-	echo "  -i    interface (default $ADAPTER)"
-	echo "  -p    display battery level (%)"
+	echo "  -h    display humidity (in %)"
+	echo "  -i I  interface I (default $ADAPTER)"
+	echo "  -p    display battery level (in %)"
 	echo "  -r N  try connecting N times (default $TRIES)"
 	echo "  -s    display temperature, humidity and battery voltage"
-	echo "  -t    display temperature (°C)"
+	echo "  -t    display temperature (in °C)"
 	echo "  -w S  wait S seconds for timeout (default $TIMEOUT)"
 }
 
 
-### Verify dependencies (gatttool)
-#
-if ! command -v gatttool >/dev/null
-then
-	echo "gatttool not found in path. Make sure Bluez is installed."
-	exit 1
-fi
-
-
 ### Parse cmdline
 #
-while getopts "b:dhpr:stw:" OPT
+while getopts "b:hi:pr:stw:" OPT
 do
 	case ${OPT} in
 	b)
@@ -48,7 +39,7 @@ do
 		SHOWHUM=1
 		;;
 	i)
-		ADAPTER="$OPTARGS"
+		ADAPTER="$OPTARG"
 		;;
 	p)
 		SHOWBAT=1
@@ -84,6 +75,24 @@ then
 	echo >&2
 	show_help >&2
 	exit 2
+fi
+
+
+### Verify dependencies (gatttool)
+#
+if ! command -v gatttool >/dev/null
+then
+	echo "gatttool not found in path. Make sure Bluez is installed."
+	exit 1
+fi
+
+
+### Verify adapter is found and up
+#
+if hciconfig $ADAPTER 2>&1 | grep -q -e "No such device" -e "DOWN"
+then
+	echo "ERROR: Device $ADAPTER is down or does not exist."
+	exit 1
 fi
 
 
