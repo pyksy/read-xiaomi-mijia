@@ -105,7 +105,9 @@ then
 	TRY=0
 	while [ -z "$RAWDATA" ] && [ $TRY -lt $TRIES ]
 	do
-		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" --char-write-req --handle=0x0038 --value=0100 --listen | grep "Notification handle" -m 1 | cut -d : -f 2-)"
+		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" \
+			--char-write-req --handle=0x0038 --value=0100 --listen \
+			| grep "Notification handle" -m 1 | cut -d : -f 2-)"
 		TRY=$((TRY+1))
 	done
 
@@ -128,7 +130,8 @@ then
 	TRY=0
 	while [ -z "$RAWDATA" ] && [ $TRY -lt $TRIES ]
 	do
-		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" --char-read --uuid 0x2a19 --listen | cut -d : -f 3)"
+		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" \
+			--char-read --uuid 0x2a19 --listen | cut -d : -f 3)"
 		TRY=$((TRY+1))
 	done
 
