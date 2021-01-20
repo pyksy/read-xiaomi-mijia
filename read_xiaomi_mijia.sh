@@ -1,22 +1,20 @@
 #!/bin/bash
 
+###
+#
+# read_xiaomi_mijia.sh by Antti Kultanen <pyksy at pyksy dot fi>
+#
+# License: WTFPL
+#
+
 TRIES=5
 TIMEOUT=30
 ADAPTER=hci0
 
-# -b bt address
-# -h humidity
-# -i interface
-# -p battery percentage
-# -r retries
-# -s summary
-# -t temperature
-# -w wait timeout
-
 function show_help() {
 	echo "Usage: $0 -b BLUETOOTH_MAC [-h] [-i INTERFACE] [-p] [-r RETRIES] [-s] [-t] [-w TIMEOUT]"
 	echo ""
-	echo "  -b A  connect to bluetooth device MAC address A"
+	echo "  -b A  connect to sensor at bluetooth MAC address A"
 	echo "  -h    display humidity (in %)"
 	echo "  -i I  use interface I (default $ADAPTER)"
 	echo "  -p    display battery level (in %)"
@@ -63,9 +61,12 @@ do
 	esac
 done
 
+
+### Verify mandatory options
+#
 if [ -z "$BTADDRESS" ]
 then
-	echo "ERROR: No bluetooth address specified." >&2
+	echo "ERROR: No sensor bluetooth address specified." >&2
 	echo >&2
 	show_help >&2
 	exit 1
@@ -108,7 +109,7 @@ then
 		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" \
 			--char-write-req --handle=0x0038 --value=0100 --listen \
 			| grep "Notification handle" -m 1 | cut -d : -f 2-)"
-		TRY=$((TRY+1))
+		((TRY++))
 	done
 
 	if [ $TRY -eq $TRIES ]
@@ -123,6 +124,7 @@ then
 fi
 unset RAWDATA
 
+
 ### Read battery percentage from device
 #
 if [ -n "$SHOWBAT" ]
@@ -132,7 +134,7 @@ then
 	do
 		RAWDATA="$(timeout $TIMEOUT gatttool --adapter="$ADAPTER" -b "$BTADDRESS" \
 			--char-read --uuid 0x2a19 --listen | cut -d : -f 3)"
-		TRY=$((TRY+1))
+		((TRY++))
 	done
 
 	        if [ $TRY -eq $TRIES ]
@@ -143,6 +145,7 @@ then
 
 	BAT="$(awk '{ printf("ibase=16; %s\n",$1); }' <<<"${RAWDATA^^}" | bc)"
 fi
+
 
 ### Display data
 #
