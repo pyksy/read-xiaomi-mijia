@@ -1,5 +1,5 @@
-# read-xiaomi-mijia
-Bash script to output temperature, humidity and/or battery level from Xiaomi Mijia Bluetooth LE sensors
+# read-xiaomi-mijiau
+Bash script to output temperature, humidity and/or battery level from Xiaomi Mijia Bluetooth LE sensors using gatttool from BlueZ protocol stack.
 
 Sample usage:
 ```
