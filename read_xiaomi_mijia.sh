@@ -14,7 +14,7 @@ ADAPTER=hci0
 function show_help() {
 	echo "Usage: $0 -b BLUETOOTH_MAC [-h] [-i INTERFACE] [-p] [-r RETRIES] [-s] [-t] [-w TIMEOUT]"
 	echo ""
-	echo "  -b A  connect to sensor at bluetooth MAC address A"
+	echo "  -b A  connect to sensor at Bluetooth MAC address A"
 	echo "  -h    display humidity (in %)"
 	echo "  -i I  use interface I (default $ADAPTER)"
 	echo "  -p    display battery level (in %)"
@@ -62,22 +62,46 @@ do
 done
 
 
-### Verify mandatory options
+### Verify options
 #
-if [ -z "$BTADDRESS" ]
-then
-	echo "ERROR: No sensor bluetooth address specified." >&2
-	echo >&2
-	show_help >&2
-	exit 1
-fi
-
 if [ -z "$SHOWBAT" ] && [ -z "$SHOWHUM" ] && [ -z "$SHOWTEMP" ]
 then
 	echo "ERROR: Nothing to do" >&2
 	echo >&2
 	show_help >&2
-	exit 2
+	exit 1
+fi
+
+if [ -z "$BTADDRESS" ]
+then
+	echo "ERROR: No sensor Bluetooth MAC address specified. (-b)" >&2
+	echo >&2
+	show_help >&2
+	exit 1
+fi
+
+if ! [[ ${BTADDRESS^^} =~ ^([A-F0-9]{2}:){5}[A-F0-9]{2}$ ]]
+then
+	echo "ERROR: Invalid Bluetooth MAC address '$BTADDRESS'. (-b)"
+	exit 1
+fi
+
+if ! [[ $ADAPTER =~ ^hci[0-9]+$ ]]
+then
+	echo "ERROR: Invalid bluetooth device name '$ADAPTER'. (-i)"
+	exit 1
+fi
+
+if ! [[ $TRIES =~ ^[0-9]+$ ]]
+then
+	echo "ERROR: '$TRIES' is not a valid number of times to try. (-r)"
+	exit 1
+fi
+
+if ! [[ $TIMEOUT =~ ^[0-9]+$ ]]
+then
+	echo "ERROR: '$TIMEOUT' is not a valid number of seconds to wait. (-w)"
+	exit 1
 fi
 
 
