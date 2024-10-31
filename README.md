@@ -11,3 +11,5 @@ To find your sensors' bluetooth addresses you can run
 hcitool lescan
 ```
 and look for MACs starting with A4:C1:38.
+
+![Image of Xiaomi Mi Temperature and Humidity Monitor 2](images/xiaomi_monitor_2.jpg)
